@@ -14,18 +14,6 @@
 #include <jscntxt.h>
 
 JSBool
-add_prop(JSContext* jscx, JSObject* jsobj, jsval key, jsval* rval)
-{
-    JSObject* obj = NULL;
-
-    if(!JSVAL_IS_OBJECT(*rval)) return JS_TRUE;
-
-    obj = JSVAL_TO_OBJECT(*rval);
-    if(JS_ObjectIsFunction(jscx, obj)) return set_prop(jscx, jsobj, key, rval);
-    return JS_TRUE;
-}
-
-JSBool
 del_prop(JSContext* jscx, JSObject* jsobj, jsval key, jsval* rval)
 {
     Context* pycx = NULL;
@@ -149,6 +137,18 @@ done:
     Py_XDECREF(pykey);
     Py_XDECREF(pyval);
     return ret;
+}
+
+JSBool
+add_prop(JSContext* jscx, JSObject* jsobj, jsval key, jsval* rval)
+{
+    JSObject* obj = NULL;
+
+    if(JSVAL_IS_NULL(*rval) || !JSVAL_IS_OBJECT(*rval)) return JS_TRUE;
+
+    obj = JSVAL_TO_OBJECT(*rval);
+    if(JS_ObjectIsFunction(jscx, obj)) return set_prop(jscx, jsobj, key, rval);
+    return JS_TRUE;
 }
 
 JSBool
